@@ -114,7 +114,7 @@ step('4. --only=scripts 真注入 npm scripts', () => {
 });
 
 step('5. 幂等性 — 重跑应全跳过', () => {
-  const r = run(['init', '--yes', '--skip-browsers', '--skip-skill'], { cwd: fixture });
+  const r = run(['init', '--yes', '--skip-browsers'], { cwd: fixture });
   assert(
     /已存在|无需修改|已就绪|已生成|已有配置/.test(r.stdout),
     '重跑应有"跳过"或"无需修改"字样',

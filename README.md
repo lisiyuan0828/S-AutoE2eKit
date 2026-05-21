@@ -77,7 +77,14 @@ npx s-auto-e2e-kit init
 4. 生成 `playwright.config.js`（reporter / projects / baseURL 已就绪）
 5. 创建 `docs/e2e/` 业务文档骨架（README / auth / flows / selectors / i18n）
 6. 注入 `package.json#scripts.{e2e, e2e:ui, e2e:headed, e2e:report}`
-7. 引导安装 [auto-e2e Claude skill](https://github.com/lisiyuan0828/S-AutoE2eSkill)（已装则跳过）
+
+> 💡 **完成后推荐：**为 CodeBuddy / Claude 等 AI 环境装上配套 skill，以获得自然语言驱动能力：
+>
+> ```bash
+> npx skills add lisiyuan0828/S-AutoE2eSkill
+> ```
+>
+> 装好后直接对 AI 说“测一下登录流程”即可自动接管。
 
 #### CLI 命令
 
@@ -87,10 +94,9 @@ npx s-auto-e2e-kit init
 | `npx s-auto-e2e-kit init --yes` | 跳过所有确认（CI 必备） |
 | `npx s-auto-e2e-kit init --dry-run` | 走全流程但不真改文件、不真装包 |
 | `npx s-auto-e2e-kit init --manual` | 仅打印手动命令，不执行 |
-| `npx s-auto-e2e-kit init --only=<id>` | 只跑某一步：`deps` / `browsers` / `config` / `docs` / `scripts` / `skill` |
+| `npx s-auto-e2e-kit init --only=<id>` | 只跑某一步：`deps` / `browsers` / `config` / `docs` / `scripts` |
 | `npx s-auto-e2e-kit init --force` | 覆盖已存在的 config / docs / scripts |
 | `npx s-auto-e2e-kit init --skip-browsers` | 跳过浏览器下载 |
-| `npx s-auto-e2e-kit init --skip-skill` | 跳过 skill 引导 |
 | `npx s-auto-e2e-kit doctor` | 9 项环境体检（只读，不修复） |
 | `npx s-auto-e2e-kit --version` | 打印版本号 |
 | `npx s-auto-e2e-kit help` | 显示完整帮助 |

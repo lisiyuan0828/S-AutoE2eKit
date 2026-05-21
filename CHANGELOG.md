@@ -2,6 +2,30 @@
 
 本文档记录 `s-auto-e2e-kit` 的版本变更。格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+## [0.1.1] - 2026-05-21
+
+### 🔥 Removed · 移除 init 中的 skill 引导步骤
+
+- **删除 step**：`ensure-skill` 不再作为 init 的一环（原为 checklist 第 7 项 `引导安装 auto-e2e Claude skill（可选）`）。
+- **删除文件**：`lib/cli/steps/ensure-skill.js`。
+- **删除 flag**：`--skip-skill`（已无意义；同步从 `BOOLEAN_FLAGS` / `help.js` 文案 / `ci-smoke.mjs` 用例中清除）。
+- **删除 `--only=skill`**：可选步骤列表中不再出现 `skill`。
+
+### ✨ Changed · skill 安装降级为完成提示
+
+- init 全流程跑完后，在末尾"下一步"之后追加一段**强提示**：
+  ```
+  配套 Claude / CodeBuddy skill（强烈推荐）:
+    npx skills add lisiyuan0828/S-AutoE2eSkill
+  ```
+- 用意：kit 只负责"装环境"，skill 是用户**自己用 `npx skills add` 装**的事——两边各司其职，避免在 init 里再做重复/不可控的引导动作。
+
+### 📝 Rationale
+
+- 之前 `ensureSkill` step 在不同 AI 环境（Claude / CodeBuddy / Cursor）下检测路径不同、容易误判"已装"或"装失败"，导致用户体验割裂。
+- skill 由 `npx skills add` 这一**官方标准入口**安装，行为可预期、可重入、可锁定（`skills-lock.json`），无需 kit 介入。
+- 移除后 init 流程从 6 个 step 精简为 5 个，幂等性 / CI 友好性不变。
+
 ## [0.1.0] - 2026-05-21
 
 ### ✨ Added · CLI 一键初始化（最大亮点）
