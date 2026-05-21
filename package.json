@@ -1,6 +1,6 @@
 {
   "name": "s-auto-e2e-kit",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Drop-in Playwright E2E factory toolkit: scene-agnostic reporters (quantified Markdown+JSON, multi-scene index, enhanced HTML, tabbed self-contained summary) and cross-repo utils (wait strategies, persistence, network mocks, event capture, visible text, run context).",
   "license": "MIT",
   "author": "lisiyuan0828",

@@ -2,6 +2,56 @@
 
 本文档记录 `s-auto-e2e-kit` 的版本变更。格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+## [0.1.2] - 2026-05-21
+
+### ✨ Changed · docs/e2e 改为按需生成 + scripts 精简
+
+针对用户反馈"`docs/e2e/` 默认 5 个文件不够个性化、`scripts` 4 个太冗余"，本次按"工业标准 = 默认值精准、可选项明确"原则做了一次精简：
+
+#### 📂 docs/e2e/ 业务文档骨架
+
+- **核心 4 件套继续默认生成**（覆盖 99% 项目场景）：
+  - `README.md` —— 元说明（所有项目通用）
+  - `auth.md` —— 登录 / 鉴权 / 测试账号
+  - `flows.md` —— 核心业务流程清单
+  - `selectors.md` —— 关键元素定位约定
+- **`i18n.md` 改为 detect-driven**：仅当 `detectProject` 在 `package.json` 里检测到 i18n 库（`i18next` / `react-i18next` / `next-i18next` / `vue-i18n` / `@nuxtjs/i18n` / `react-intl` / `@formatjs/intl` / `@lingui/core` / `svelte-i18n` 等）时才生成。
+  - 没装 i18n 的纯业务系统不再被强加无关模板。
+  - 后期想补：`cp node_modules/s-auto-e2e-kit/lib/cli/templates/docs-e2e/i18n.md docs/e2e/`
+- **新增"不需要可直接删"原则**写入 `docs/e2e/README.md` 模板：skill 检测到文件不存在会自动跳过该维度，不会报错。
+- 完成提示中 `docs` 步骤的 label 会动态显示"核心 4 + i18n.md"或"核心 4 个文件"，让用户对生成内容心里有数。
+
+#### 📦 npm scripts 精简
+
+- **从 4 条砍到 2 条**（`e2e` + `e2e:ui` 必装）：
+  - ✅ `e2e` ：`playwright test`（CI 必备）
+  - ✅ `e2e:ui`：`playwright test --ui`（开发时极好用）
+  - ❌ ~~`e2e:headed`~~ ：playwright 原生 `--headed` 一参数即可，不必 alias
+  - ❌ ~~`e2e:report`~~ ：`npx playwright show-report` 一行命令，不必 alias
+- **教学不丢**：被砍的两条以 hint 形式出现在 init 完成提示，并写入 `docs/e2e/README.md` 的"常用命令速查"表中，用户随用随查。
+
+### 🔧 Internal
+
+- `detect-project.js` 新增 `hasI18n` 字段（向后兼容；未使用方不受影响）。
+- `ensure-docs.js` 拆分 `CORE_FILES` / `OPTIONAL_FILES`，模板新增可选维度更清晰。
+- `init.js` 完成提示改为只列核心两条 + hint 行教 playwright 原生 CLI；`docs` 步骤 label 根据 `project.hasI18n` 动态显示。
+- `templates/docs-e2e/README.md` 增加"默认"列、"不需要可删"原则段、"常用命令速查"表。
+
+### 📝 Rationale
+
+- **docs**：kit 的职责是"装环境"而不是"假装懂业务"。i18n 模板对没多语言需求的项目是噪声，对有需求的项目可以靠 `package.json` 一票否决式探测精准命中——这才是 init 该做的事。
+- **scripts**：playwright 自身就是合格的 CLI 工具，alias 一条参数搞定的命令是过度设计。`create-playwright` 官方脚手架也只装一个 `e2e`。
+
+### ⏩ Migration
+
+- 已用 0.1.1 跑过 init 的项目：**无需任何操作**。已生成的 `i18n.md` 和 4 条 scripts 全部保留（init 幂等，重跑不会删）。如果想手动精简：
+  ```bash
+  # 没多语言项目可以删 i18n.md
+  rm docs/e2e/i18n.md
+  # 删掉用不到的 scripts
+  npm pkg delete scripts.e2e:headed scripts.e2e:report
+  ```
+
 ## [0.1.1] - 2026-05-21
 
 ### 🔥 Removed · 移除 init 中的 skill 引导步骤

@@ -7,13 +7,25 @@
 
 ## 文件清单
 
-| 文件 | 作用 | 何时改 |
-| --- | --- | --- |
-| [README.md](./README.md) | 入口（你在看） | 团队接入或重构时 |
-| [auth.md](./auth.md) | 登录 / 鉴权 / 测试账号 | 登录流程变化、新增测试账号 |
-| [flows.md](./flows.md) | 核心业务流程清单 | 新增功能、改主流程 |
-| [selectors.md](./selectors.md) | 关键元素定位约定 | 改 UI 结构、统一 data-testid |
-| [i18n.md](./i18n.md) | 多语言键值 / 文案 | 新增语种、改文案 |
+| 文件 | 作用 | 何时改 | 默认 |
+| --- | --- | --- | --- |
+| [README.md](./README.md) | 入口（你在看） | 团队接入或重构时 | ✅ 总是生成 |
+| [auth.md](./auth.md) | 登录 / 鉴权 / 测试账号 | 登录流程变化、新增测试账号 | ✅ 总是生成 |
+| [flows.md](./flows.md) | 核心业务流程清单 | 新增功能、改主流程 | ✅ 总是生成 |
+| [selectors.md](./selectors.md) | 关键元素定位约定 | 改 UI 结构、统一 data-testid | ✅ 总是生成 |
+| [i18n.md](./i18n.md) | 多语言键值 / 文案 | 新增语种、改文案 | ⚙️ 检测到 i18n 库时才生成 |
+
+> **模板里给你的不是"成品文档"，是"填空题模板"**——按里面的小标题往下填即可。
+>
+> **不需要的文件可以直接删**：skill 检测到文件不存在会自动跳过该维度，不会报错。例如：
+> - 没有登录系统 → 删掉 `auth.md`
+> - 项目不是单页应用，selector 全靠位置语义 → 删掉 `selectors.md`
+> - 没有多语言 → 项目里就不会有 `i18n.md`，不用管
+>
+> **后期想补 `i18n.md`**：如果 init 时没生成，可以从 npm 包里拷模板：
+> ```bash
+> cp node_modules/s-auto-e2e-kit/lib/cli/templates/docs-e2e/i18n.md docs/e2e/
+> ```
 
 ## 写作原则
 
@@ -26,8 +38,20 @@
 
 skill 读取顺序固定为：
 1. `README.md` —— 拿到整体结构
-2. `auth.md` —— 拿到登录怎么做
+2. `auth.md` —— 拿到登录怎么做（不存在则视作"无登录系统"）
 3. `flows.md` —— 拿到要测的流程
-4. 用到时按需加载 `selectors.md` / `i18n.md`
+4. 用到时按需加载 `selectors.md` / `i18n.md`（不存在则按通用策略推断）
 
 所以**不要**改文件名；如需新增主题，加新文件并在本表格里登记。
+
+## 常用命令速查
+
+| 命令 | 用途 |
+| --- | --- |
+| `npm run e2e` | 跑全部 e2e 测试（CI 用） |
+| `npm run e2e:ui` | Playwright UI 模式（推荐边写边看） |
+| `npx playwright test --headed` | 带浏览器窗口跑（debug） |
+| `npx playwright test some.spec.ts --debug` | 单文件断点调试 |
+| `npx playwright show-report` | 打开 HTML 报告 |
+| `npx playwright codegen <url>` | 录制脚本（看一次就懂） |
+| `npx s-auto-e2e-kit doctor` | 9 项环境体检（只读） |
