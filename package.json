@@ -1,6 +1,6 @@
 {
   "name": "s-auto-e2e-kit",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Drop-in Playwright E2E factory toolkit: scene-agnostic reporters (quantified Markdown+JSON, multi-scene index, enhanced HTML, tabbed self-contained summary) and cross-repo utils (wait strategies, persistence, network mocks, event capture, visible text, run context).",
   "license": "MIT",
   "author": "lisiyuan0828",
@@ -13,6 +13,10 @@
     "url": "https://github.com/lisiyuan0828/S-AutoE2eKit/issues"
   },
   "main": "lib/index.js",
+  "bin": {
+    "auto-e2e": "bin/auto-e2e.mjs",
+    "auto-e2e-kit": "bin/auto-e2e.mjs"
+  },
   "exports": {
     ".": "./lib/index.js",
     "./reporters": "./lib/reporters/index.js",
@@ -22,15 +26,20 @@
     "./package.json": "./package.json"
   },
   "files": [
+    "bin/auto-e2e.mjs",
     "lib/",
-    "scripts/",
+    "scripts/sync-vendor.js",
     "README.md",
     "README.zh.md",
     "CHANGELOG.md",
     "LICENSE"
   ],
   "scripts": {
-    "sync-vendor": "node scripts/sync-vendor.js"
+    "sync-vendor": "node scripts/sync-vendor.js",
+    "cli": "node bin/auto-e2e.mjs",
+    "cli:init": "node bin/auto-e2e.mjs init",
+    "cli:doctor": "node bin/auto-e2e.mjs doctor",
+    "cli:help": "node bin/auto-e2e.mjs --help"
   },
   "peerDependencies": {
     "@playwright/test": ">=1.55.0 <2.0.0"
@@ -55,7 +64,11 @@
     "factory",
     "scene-agnostic",
     "wait-strategies",
-    "network-mock"
+    "network-mock",
+    "cli",
+    "init",
+    "scaffold",
+    "bootstrap"
   ],
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",

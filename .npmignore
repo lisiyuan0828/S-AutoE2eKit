@@ -35,3 +35,15 @@ node_modules/
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+
+# Workspace / IDE 探针（编辑器或 LSP 偶尔会留下的 0 字节标记）
+.workspace-probe
+**/.workspace-probe
+.codebuddy/
+.cursor/
+
+# CI / GitHub 资产 —— 仅供仓库 CI 使用，不应进 npm 包
+.github/
+scripts/ci-*.mjs
+scripts/ci-*.js
+pack-output.txt

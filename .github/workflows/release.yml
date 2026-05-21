@@ -1,0 +1,67 @@
+name: Release
+
+# 触发条件：推一个 vX.Y.Z 形式的 tag（语义化版本）
+#   git tag v0.1.0 && git push origin v0.1.0
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-*'   # 兼容 v0.1.0-beta.1 这种预发版
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write   # 启用 OIDC trusted publishing（npm provenance）
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+          # 自动写 ~/.npmrc，让 publish 能读到 NPM_TOKEN
+          always-auth: true
+
+      - name: Install (production-only)
+        run: npm install --omit=dev --no-audit --no-fund
+
+      - name: Verify tag matches package.json version
+        run: |
+          TAG="${GITHUB_REF#refs/tags/v}"
+          PKG_VER=$(node -e "console.log(require('./package.json').version)")
+          if [ "$TAG" != "$PKG_VER" ]; then
+            echo "::error::tag $TAG != package.json version $PKG_VER"
+            exit 1
+          fi
+          echo "✓ tag $TAG matches package.json version"
+        shell: bash
+
+      - name: Run pre-publish smoke
+        run: |
+          node bin/auto-e2e.mjs --version
+          node scripts/ci-validate-pkg.mjs
+          npm pack --dry-run 2>&1 | tee pack-output.txt
+          if grep -q ".workspace-probe" pack-output.txt; then
+            echo "::error::workspace-probe leaked into tarball, abort publish"
+            exit 1
+          fi
+        shell: bash
+
+      - name: Publish to npm
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release notes
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          # body 留空让 GitHub 根据 commits 自动生成；如果 CHANGELOG.md 维护得好可改用其内容
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}

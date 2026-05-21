@@ -62,7 +62,44 @@ Every team that runs Playwright end-to-end tests at scale ends up rewriting the 
 
 ## Quick start
 
-### Install
+### ✨ One-shot init via CLI (recommended, since v0.1.0)
+
+```bash
+# 在你的项目根目录跑一行：
+npx s-auto-e2e-kit init
+```
+
+会自动完成：
+
+1. 探测 node / 包管理器（npm / pnpm / yarn）/ monorepo / framework / baseURL
+2. 装 `@playwright/test` + `s-auto-e2e-kit`
+3. 装 chromium 浏览器
+4. 生成 `playwright.config.js`（reporter / projects / baseURL 已就绪）
+5. 创建 `docs/e2e/` 业务文档骨架（README / auth / flows / selectors / i18n）
+6. 注入 `package.json#scripts.{e2e, e2e:ui, e2e:headed, e2e:report}`
+7. 引导安装 [auto-e2e Claude skill](https://github.com/lisiyuan0828/S-AutoE2eSkill)（已装则跳过）
+
+#### CLI 命令
+
+| 命令 | 作用 |
+| --- | --- |
+| `npx s-auto-e2e-kit init` | 一键初始化（默认交互式，一次 confirm） |
+| `npx s-auto-e2e-kit init --yes` | 跳过所有确认（CI 必备） |
+| `npx s-auto-e2e-kit init --dry-run` | 走全流程但不真改文件、不真装包 |
+| `npx s-auto-e2e-kit init --manual` | 仅打印手动命令，不执行 |
+| `npx s-auto-e2e-kit init --only=<id>` | 只跑某一步：`deps` / `browsers` / `config` / `docs` / `scripts` / `skill` |
+| `npx s-auto-e2e-kit init --force` | 覆盖已存在的 config / docs / scripts |
+| `npx s-auto-e2e-kit init --skip-browsers` | 跳过浏览器下载 |
+| `npx s-auto-e2e-kit init --skip-skill` | 跳过 skill 引导 |
+| `npx s-auto-e2e-kit doctor` | 9 项环境体检（只读，不修复） |
+| `npx s-auto-e2e-kit --version` | 打印版本号 |
+| `npx s-auto-e2e-kit help` | 显示完整帮助 |
+
+所有 step 都是**幂等**的：重跑只会跳过已存在的内容（除非加 `--force`）。
+
+> **不想用 CLI？** 直接看下面的 [Manual install](#manual-install)，所有手动步骤的等价物都列了出来。
+
+### Manual install
 
 ```bash
 npm i -D s-auto-e2e-kit

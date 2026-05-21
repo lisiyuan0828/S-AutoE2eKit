@@ -1,8 +1,72 @@
 # Changelog
 
-本文档记录 `@tencent/e2e-kit` 的版本变更。格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)。
+本文档记录 `s-auto-e2e-kit` 的版本变更。格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
-## [Unreleased]
+## [0.1.0] - 2026-05-21
+
+### ✨ Added · CLI 一键初始化（最大亮点）
+
+新增 `npx s-auto-e2e-kit init` —— 在任意 Playwright 项目根目录跑一行命令，即可完成：
+
+- ✅ 探测：node 版本 / 包管理器（npm/pnpm/yarn）/ monorepo / framework（react/vue/svelte/next/nuxt）/ TS-or-JS / dev script / baseURL（vite=5173 / next=3000 / webpack=8080）
+- ✅ 装 `@playwright/test` + `s-auto-e2e-kit`（按探测到的包管理器选命令）
+- ✅ 装 chromium 浏览器（可 `--skip-browsers`）
+- ✅ 生成 `playwright.config.js`（reporter / projects / baseURL 占位符自动替换）
+- ✅ 创建 `docs/e2e/` 业务文档骨架（5 个 md：README / auth / flows / selectors / i18n —— 给 `auto-e2e` skill 当知识库用）
+- ✅ 注入 `package.json#scripts.{e2e, e2e:ui, e2e:headed, e2e:report}`
+- ✅ 引导安装 [auto-e2e Claude skill](https://github.com/lisiyuan0828/S-AutoE2eSkill)（已装自动识别并跳过）
+
+#### CLI 子命令
+
+- `init` —— 一键初始化（核心命令）
+- `doctor` —— 9 项环境体检（只读，不修复）
+- `help` / `--help` / `--version`
+
+#### Init 选项（覆盖默认行为）
+
+`--yes` / `-y` · `--auto` · `--manual` · `--dry-run` · `--force` · `--only=<id>` · `--skip-browsers` · `--skip-skill` · `--pkg-manager <npm|pnpm|yarn>`
+
+#### 设计原则
+
+- **零第三方依赖**（不引 commander / inquirer / chalk / ora / picocolors） —— `npx` 启动快，包体积稳
+- **幂等** —— 重跑所有 step 智能跳过（除非 `--force`）
+- **CI 友好** —— 非 TTY 自动按默认值通过，绝不 hang
+- **跨平台** —— Windows shell 模式 + `.mjs` shebang
+- **可独立单跑** —— `--only=<id>` 让任意失败步骤可以单独重试，不必从头来
+
+#### 新增文件
+
+```
+bin/
+└── auto-e2e.mjs                          # 薄壳入口（双 bin 别名：auto-e2e / auto-e2e-kit）
+lib/cli/
+├── index.js                              # 路由 + 极简 arg parser
+├── commands/{help,init,doctor}.js
+├── steps/                                # 8 个独立、可单跑的 step
+│   ├── detect-env.js / detect-project.js
+│   └── ensure-{dependencies,browsers,config,docs,scripts,skill}.js
+├── utils/{logger,prompt,exec,paths}.js   # 4 个零依赖小工具
+└── templates/
+    ├── playwright.config.js              # 含 __TEST_DIR__ / __BASE_URL__ / __DEV_COMMAND__ 占位符
+    └── docs-e2e/{README,auth,flows,selectors,i18n}.md
+```
+
+### 🔧 Changed
+
+- `package.json` 加 `bin` 字段（双别名 `auto-e2e` / `auto-e2e-kit`）
+- `package.json#files` 白名单加入 `bin/`
+- 新增 `cli` / `cli:init` / `cli:doctor` / `cli:help` 4 条调试用 npm scripts
+
+### 📝 Notes
+
+- 包名重命名：从 `@tencent/e2e-kit` 改为 `s-auto-e2e-kit`（unscoped，公开发布到 npm）。所有内部 require 路径已同步更新；调用方 import 路径也由 `require('@tencent/e2e-kit')` 改为 `require('s-auto-e2e-kit')`。
+- `[0.0.1]` 之前的内容（含 Phase 1~8）保留在下方作为历史归档。
+
+---
+
+## [0.0.1] - 历史归档
+
+> 以下条目是包从 `@tencent/e2e-kit` 公开发布前的内部迭代历史（Phase 1~8），按时间倒序排列。0.1.0 起改名为 `s-auto-e2e-kit`。
 
 ### Phase 8 · quantified-summary 详情 tab 化（🅵 方案 · 已完成）
 

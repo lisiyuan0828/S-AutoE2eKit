@@ -1,0 +1,93 @@
+name: CI
+
+# 触发条件
+#   - 推到 main 分支
+#   - 任何 PR 进来
+#   - 手动 dispatch（可选）
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# 同 PR 多次推 → 取消旧 run，节省 GitHub Actions 配额
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    name: smoke (Node ${{ matrix.node }} on ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: ['18', '20']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      # 装本包自身的依赖（marked），不装 dev/peer
+      - name: Install (production-only)
+        run: npm install --omit=dev --no-audit --no-fund
+
+      # 1. 语法静检：不用 lint 工具，用 node -c 兜底每个 cli 入口
+      - name: Syntax check (CLI entry)
+        run: |
+          node -c bin/auto-e2e.mjs
+          node -c lib/cli/index.js
+          node -c lib/cli/commands/init.js
+          node -c lib/cli/commands/doctor.js
+          node -c lib/cli/commands/help.js
+        shell: bash
+
+      # 2. 验证 --version / --help / 未知命令的退出码
+      - name: CLI smoke (version / help / unknown)
+        run: |
+          node bin/auto-e2e.mjs --version
+          node bin/auto-e2e.mjs --help > /dev/null
+          # 未知命令应该 exit 2
+          set +e
+          node bin/auto-e2e.mjs definitely-not-a-command > /dev/null 2>&1
+          code=$?
+          if [ "$code" != "2" ]; then
+            echo "::error::unknown command should exit 2, got $code"
+            exit 1
+          fi
+          echo "✓ unknown command exits 2 as expected"
+        shell: bash
+
+      # 3. 端到端：在临时 fixture 项目里跑 init --dry-run + doctor
+      - name: E2E smoke (fixture project)
+        run: |
+          node scripts/ci-smoke.mjs
+        shell: bash
+
+      # 4. 发包前体检：npm pack --dry-run
+      - name: npm pack dry-run
+        run: |
+          npm pack --dry-run 2>&1 | tee pack-output.txt
+          if grep -q ".workspace-probe" pack-output.txt; then
+            echo "::error::workspace-probe leaked into tarball"
+            exit 1
+          fi
+          echo "✓ tarball is clean"
+        shell: bash
+
+  # 单独一个 job 验证发包元数据正确性（包名 / version / bin / files）
+  pack-meta:
+    name: pack-meta
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: Validate package.json
+        run: node scripts/ci-validate-pkg.mjs
