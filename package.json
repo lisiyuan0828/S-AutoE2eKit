@@ -1,0 +1,64 @@
+{
+  "name": "s-auto-e2e-kit",
+  "version": "0.0.1",
+  "description": "Drop-in Playwright E2E factory toolkit: scene-agnostic reporters (quantified Markdown+JSON, multi-scene index, enhanced HTML, tabbed self-contained summary) and cross-repo utils (wait strategies, persistence, network mocks, event capture, visible text, run context).",
+  "license": "MIT",
+  "author": "lisiyuan0828",
+  "homepage": "https://github.com/lisiyuan0828/S-AutoE2eKit#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lisiyuan0828/S-AutoE2eKit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lisiyuan0828/S-AutoE2eKit/issues"
+  },
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./reporters": "./lib/reporters/index.js",
+    "./reporters/*": "./lib/reporters/*.js",
+    "./utils": "./lib/utils/index.js",
+    "./utils/*": "./lib/utils/*.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/",
+    "scripts/",
+    "README.md",
+    "README.zh.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "sync-vendor": "node scripts/sync-vendor.js"
+  },
+  "peerDependencies": {
+    "@playwright/test": ">=1.55.0 <2.0.0"
+  },
+  "dependencies": {
+    "marked": "^18.0.0"
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "keywords": [
+    "playwright",
+    "e2e",
+    "end-to-end",
+    "test",
+    "testing",
+    "reporter",
+    "html-report",
+    "quantified-report",
+    "auto-e2e",
+    "auto-e2e-toolkit",
+    "factory",
+    "scene-agnostic",
+    "wait-strategies",
+    "network-mock"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  }
+}

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>__INJECT_TITLE__</title>
+  <style>
+/*__INJECT_CSS__*/
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <h1 class="topbar-title">🧪 __INJECT_TITLE__</h1>
+      <div class="topbar-meta">
+        <span id="runstamp" class="runstamp"></span>
+        <span id="generated-at" class="generated-at"></span>
+      </div>
+      <nav class="topbar-actions">
+        <a id="link-pw-report" href="./index.html" class="btn-link" title="返回 Playwright 原生 HTML 报告">← Playwright 原生报告</a>
+      </nav>
+    </header>
+
+    <section class="filterbar">
+      <span class="filterbar-label">过滤：</span>
+      <button class="filter-btn active" data-filter="all">全部</button>
+      <button class="filter-btn" data-filter="pass">PASS</button>
+      <button class="filter-btn" data-filter="fail">FAIL</button>
+      <button class="filter-btn" data-filter="skip">SKIP</button>
+      <span class="filterbar-spacer"></span>
+      <input id="search" type="search" placeholder="按 step ID / 标题搜索…" />
+    </section>
+
+    <main class="layout">
+      <aside class="sidebar" id="sidebar">
+        <!-- 用例树由 JS 渲染 -->
+        <div class="sidebar-empty">加载中…</div>
+      </aside>
+      <section class="detail" id="detail">
+        <div class="detail-empty">
+          <p>👈 从左侧选择一个 step 查看详情</p>
+          <p class="detail-empty-hint">每个 step 的详情已内嵌全文 markdown，直接阅读即可</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Powered by <code>@tencent/e2e-kit</code> · quantified-summary</span>
+    </footer>
+  </div>
+
+  <!-- 数据 + marked + 主程序 全部内嵌：file:// 协议直接可开 -->
+  <script id="quantified-data" type="application/json">/*__INJECT_DATA__*/</script>
+  <script>
+/*__INJECT_MARKED__*/
+  </script>
+  <script>
+/*__INJECT_JS__*/
+  </script>
+</body>
+</html>

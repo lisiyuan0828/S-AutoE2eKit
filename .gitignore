@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Vendor 产物（Phase 4 引入）
+# 这是从消费方 node_modules/playwright-core/lib/vite/htmlReport/ 同步出来的派生产物，
+# 由 scripts/sync-vendor.js 在消费方 npm install 后（postinstall）或手动执行时生成。
+# 严禁入库 —— 见 README.md 铁律 4「派生产物不入库」。
+vendor/
+
+# 构建产物
+dist/
+build/
+
+# 编辑器
+.DS_Store
+.vscode/
+.idea/
+
+# 日志
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

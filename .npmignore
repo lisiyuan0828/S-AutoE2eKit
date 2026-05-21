@@ -1,0 +1,35 @@
+# 控制 npm publish 时打进 tarball 的内容
+# 注意：package.json 的 "files" 字段已是白名单
+# （lib / scripts / README.md / README.zh.md / CHANGELOG.md / LICENSE），
+# 此处仅作双保险，明确排除不该上传的内容。
+
+# 源文件控制
+.gitignore
+.npmignore
+
+# 测试 / 调试残留
+test/
+tests/
+*.test.js
+*.spec.js
+__tests__/
+__mocks__/
+
+# 编辑器 / 系统
+.DS_Store
+.vscode/
+.idea/
+
+# Vendor（派生产物，绝不能进 npm 包）
+vendor/
+
+# 日志 & 临时
+*.log
+node_modules/
+.npm/
+.cache/
+
+# 依赖锁文件（库不应携带 lock，由消费方决定）
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
