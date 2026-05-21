@@ -6,6 +6,8 @@
 # 源文件控制
 .gitignore
 .npmignore
+.npmrc
+.npmrc.example
 
 # 测试 / 调试残留
 test/
